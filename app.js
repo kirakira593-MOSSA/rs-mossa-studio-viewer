@@ -1,14 +1,17 @@
 // ===============================
-// JSON 読み込み
+// JSON 読み込み（GitHub Pages対応）
 // ===============================
 let rowData = [];
 
-fetch("output/latest.json") // ← 必要に応じて JSON のパスを変更
+fetch("./output/latest.json")
   .then((res) => res.json())
   .then((data) => {
     rowData = data;
     initGrid();
     initFilters();
+  })
+  .catch((err) => {
+    console.error("JSON 読み込みエラー:", err);
   });
 
 // ===============================
@@ -30,8 +33,8 @@ const columnDefs = [
     width: 90,
     cellStyle: (params) => {
       return params.value
-        ? { backgroundColor: "#d4f7d4" } // 空きあり → 緑
-        : { backgroundColor: "#f7d4d4" }; // FULL → 赤
+        ? { backgroundColor: "#d4f7d4" }
+        : { backgroundColor: "#f7d4d4" };
     },
   },
 ];
@@ -54,11 +57,11 @@ function initGrid() {
   const gridDiv = document.querySelector("#gridContainer");
   new agGrid.Grid(gridDiv, gridOptions);
 
-  window.gridOptions = gridOptions; // フィルタ用に保持
+  window.gridOptions = gridOptions;
 }
 
 // ===============================
-// フィルタバーの初期化
+// フィルタバー初期化
 // ===============================
 function initFilters() {
   const areaSelect = document.getElementById("filterArea");
@@ -68,7 +71,7 @@ function initFilters() {
   const videoSelect = document.getElementById("filterVideo");
   const availableSelect = document.getElementById("filterAvailable");
 
-  // 店舗一覧を JSON から自動生成
+  // 店舗一覧
   const stores = [...new Set(rowData.map((r) => r["店舗名"]))].sort();
   stores.forEach((s) => {
     const opt = document.createElement("option");
@@ -95,7 +98,6 @@ function initFilters() {
     instructorSelect.appendChild(opt);
   });
 
-  // フィルタ変更時の処理
   areaSelect.onchange =
     storeSelect.onchange =
     programSelect.onchange =
